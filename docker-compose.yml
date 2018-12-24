@@ -60,7 +60,9 @@ services:
     ports:
       - ${NETCORE_PORT-5000}:5000
     depends_on:
-      - mssql
+      - mysql
+    links:
+      - mysql
     volumes:
       - ${NETCORE_ROOT_DIR-./www/netcore}:/source
   mssql:
