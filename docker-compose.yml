@@ -68,6 +68,9 @@ services:
     container_name: 'mssql'
     ports:
       - ${MSSQL_PORT-1433}:1433
+    volumes: 
+      - ${MSSQL_DATA_DIR-./data/mssql}:/var/opt/mssql
+      - ${MSSQL_LOG_DIR-./logs/mssql}:/var/opt/mssql/log
     environment:
       SA_PASSWORD: ${MSSQL_PASSWORD-Yourpassword123}
       ACCEPT_EULA: "Y"
