@@ -35,11 +35,14 @@ Debe quedar el siguiente árbol de directorios
     - php
     - vhosts
 - data
+    - mssql
     - mysql
 - logs
     - apache2
+    - mssql
     - mysql
 - www
+    - *Las fuentes de tus proyectos*
     - netcore
 
 ## Instalación
