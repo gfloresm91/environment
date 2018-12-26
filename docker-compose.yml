@@ -15,11 +15,12 @@ services:
       - "443:443"
     depends_on: 
       - mysql
+      - mssql
     volumes: 
       - ${DOCUMENT_ROOT-./www}:/var/www/html
       - ${PHP_INI-./config/php/php.ini}:/etc/php/7.2/apache2/php.ini
       - ${APACHE_DIR_CONF-./config/apache/dir.conf}:/etc/apache2/mods-enabled/dir.conf
-      - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-available
+      - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
       - ${APACHE_LOG_DIR-./logs/apache2}:/var/log/apache2
       - ${LETSENCRYPT_DIR-./config/letsencrypt}:/etc/letsencrypt
   mysql:
@@ -60,8 +61,7 @@ services:
     ports:
       - ${NETCORE_PORT-5000}:5000
     depends_on:
-      - mysql
-    links:
+      - mssql
       - mysql
     volumes:
       - ${NETCORE_ROOT_DIR-./www/netcore}:/source

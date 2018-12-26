@@ -18,7 +18,8 @@ RUN apt install -y apt-utils \
                    zip \
                    unzip \
                    git \
-                   curl
+                   curl \
+                   iputils-ping
 
 # Configuration of timezone, tzdata is necesary for PHP
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -46,7 +47,8 @@ RUN apt install -y php \
                    php-mysql \
                    php-curl \
                    php-mbstring \
-                   php-zip
+                   php-zip \
+                   php-sqlite3
 
 # Apache
 RUN apt install -y apache2
@@ -59,7 +61,7 @@ RUN apt install -y python-certbot-apache
 RUN echo "ServerName 172.22.0.2" >> /etc/apache2/conf-available/fqdn.conf
 
 # Enable apache modules
-RUN a2enmod rewrite headers
+RUN a2enmod rewrite headers proxy proxy_http
 RUN a2enconf fqdn
 RUN service apache2 start
 #RUN a2dissite 000-default.conf
