@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 
 services:
   webserver:
@@ -76,3 +76,24 @@ services:
     environment:
       SA_PASSWORD: ${MSSQL_PASSWORD-Yourpassword123}
       ACCEPT_EULA: "Y"
+  openproject:
+    image: "openproject/community:8"
+    container_name: 'openproject'
+    ports:
+      - ${OP_PORT-4001}:80
+    depends_on:
+      - mysql
+    volumes:
+      - op_postgresql_data:/var/lib/postgresql/9.6/main
+      - ./logs/openproject:/var/log/supervisor
+    environment:
+      EMAIL_DELIVERY_METHOD: ${EMAIL_DELIVERY_METHOD-Yourpassword123}
+      SMTP_ADDRESS: ${SMTP_ADDRESS-smtp.example.net}
+      SMTP_PORT: ${SMTP_PORT-587}
+      SMTP_DOMAIN: ${SMTP_DOMAIN-example.net}
+      SMTP_AUTHENTICATION: ${SMTP_AUTHENTICATION-plain}
+      SMTP_USER_NAME: ${SMTP_USER_NAME-user}
+      SMTP_PASSWORD: ${SMTP_PASSWORD-password}
+      SMTP_ENABLE_STARTTLS_AUTO: ${SMTP_ENABLE_STARTTLS_AUTO-true}
+volumes:
+  op_postgresql_data:
