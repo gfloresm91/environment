@@ -61,7 +61,7 @@ RUN apt install -y python-certbot-apache
 RUN echo "ServerName 172.22.0.2" >> /etc/apache2/conf-available/fqdn.conf
 
 # Enable apache modules
-RUN a2enmod rewrite headers proxy proxy_http
+RUN a2enmod rewrite headers proxy proxy_http socache_shmcb ssl
 RUN a2enconf fqdn
 RUN service apache2 start
 #RUN a2dissite 000-default.conf
