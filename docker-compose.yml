@@ -69,7 +69,8 @@ services:
       - ${APACHE_DIR_CONF-./config/apache/dir.conf}:/etc/apache2/mods-enabled/dir.conf
       - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
       - ${APACHE_LOG_DIR-./logs/apache2}:/var/log/apache2
-      - ${LETSENCRYPT_DIR-./config/letsencrypt}:/etc/letsencrypt
+      - letsencrypt_dir:/etc/letsencrypt
+      - letsencrypt_lib_dir:/var/lib/letsencrypt
   openproject:
     image: openproject/community:8
     container_name: 'openproject'
@@ -94,6 +95,7 @@ services:
       - ${OP_LOG_DIR-./logs/openproject}:/var/log/supervisor
   gitlab:
     image: gitlab/gitlab-ce:latest
+    container_name: 'gitlab'
     restart: 'always'
     hostname: ${GL_HOSTNAME-gitlab.test}
     ports:
@@ -106,17 +108,18 @@ services:
       - gl_config_dir:/etc/gitlab
       - ${GL_LOGS_DIR-./logs/gitlab}:/var/log/gitlab
       - gl_data_dir:/var/opt/gitlab
-#  nextcloud:
-#    image: nextcloud
-#    restart: always
-#    ports:
-#      - ${NC_PORT-4003}:80
-#    depends_on:
-#      - mysql
-#    volumes:
-#      - nc_data_dir:/var/www/html/data
-#      - ${NC_CONFIG_DIR-./www/config/nextcloud}:/var/www/html/config
-#      - ${NC_APPS_DIR-./www/nextcloud/apps}:/var/www/html/apps
+  nextcloud:
+    image: nextcloud
+    container_name: 'nextcloud'
+    restart: always
+    ports:
+      - ${NC_PORT-4003}:80
+    depends_on:
+      - mysql
+    volumes:
+      - nc_data_dir:/var/www/html/data
+      - ${NC_CONFIG_DIR-./www/config/nextcloud}:/var/www/html/config
+      - ${NC_APPS_DIR-./www/nextcloud/apps}:/var/www/html/apps
   dotnetcore:
     build:
       context: ./bin/dotnetcore
@@ -135,3 +138,5 @@ volumes:
   gl_data_dir:
   gl_config_dir:
   nc_data_dir:
+  letsencrypt_dir:
+  letsencrypt_lib_dir:
