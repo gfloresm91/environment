@@ -76,7 +76,7 @@ services:
       - letsencrypt_dir:/etc/letsencrypt
       - letsencrypt_lib_dir:/var/lib/letsencrypt
   openproject:
-    image: openproject/community:8
+    image: openproject/community:7
     container_name: 'openproject'
     depends_on:
       - mysql
