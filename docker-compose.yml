@@ -69,6 +69,10 @@ services:
       - ${APACHE_DIR_CONF-./config/apache/dir.conf}:/etc/apache2/mods-enabled/dir.conf
       - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
       - ${APACHE_LOG_DIR-./logs/apache2}:/var/log/apache2
+
+      # Change this section to 
+      # ./config/letsencrypt:/etc/letsencrypt
+      # if you prefer
       - letsencrypt_dir:/etc/letsencrypt
       - letsencrypt_lib_dir:/var/lib/letsencrypt
   openproject:
@@ -79,6 +83,7 @@ services:
     ports:
       - ${OP_PORT-4001}:80
     environment:
+      # This is comment because it doesnt work form me
       # EMAIL_DELIVERY_METHOD: ${EMAIL_DELIVERY_METHOD-Yourpassword123}
       # SMTP_ADDRESS: ${SMTP_ADDRESS-smtp.example.net}
       # SMTP_PORT: ${SMTP_PORT-587}
@@ -88,7 +93,7 @@ services:
       # SMTP_PASSWORD: ${SMTP_PASSWORD-password}
       # SMTP_ENABLE_STARTTLS_AUTO: ${SMTP_ENABLE_STARTTLS_AUTO-true}
       
-      # Important: verify user privilegies
+      # Important: verify user privilegies of ${MYSQL_USER}
       DATABASE_URL: 'mysql2://${MYSQL_USER-user}:${MYSQL_PASSWORD-secret}@mysql:3306/${OP_DB_NAME-databasename}'
     volumes:
       - op_postgresql_data:/var/lib/postgresql/9.6/main
@@ -117,9 +122,11 @@ services:
     depends_on:
       - mysql
     volumes:
+      # Same what letsencrypt section, change this section if you prefer
+      # to directory folder
       - nc_data_dir:/var/www/html/data
       - ${NC_CONFIG_DIR-./www/config/nextcloud}:/var/www/html/config
-      - ${NC_APPS_DIR-./www/nextcloud/apps}:/var/www/html/apps
+      - nc_apps_dir:/var/www/html/apps
   dotnetcore:
     build:
       context: ./bin/dotnetcore
@@ -138,5 +145,6 @@ volumes:
   gl_data_dir:
   gl_config_dir:
   nc_data_dir:
+  nc_apps_dir:
   letsencrypt_dir:
   letsencrypt_lib_dir:
