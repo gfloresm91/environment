@@ -106,17 +106,17 @@ services:
       - gl_config_dir:/etc/gitlab
       - ${GL_LOGS_DIR-./logs/gitlab}:/var/log/gitlab
       - gl_data_dir:/var/opt/gitlab
-  nextcloud:
-    image: nextcloud
-    restart: always
-    ports:
-      - ${NC_PORT-4003}:80
-    depends_on:
-      - mysql
-    volumes:
-      - ${NC_DATA_DIR-./www/nextcloud/data}:/var/www/html/data
-      - ${NC_CONFIG_DIR-./www/config/nextcloud}:/var/www/html/config
-      - ${NC_APPS_DIR-./www/nextcloud/apps}:/var/www/html/apps
+#  nextcloud:
+#    image: nextcloud
+#    restart: always
+#    ports:
+#      - ${NC_PORT-4003}:80
+#    depends_on:
+#      - mysql
+#    volumes:
+#      - nc_data_dir:/var/www/html/data
+#      - ${NC_CONFIG_DIR-./www/config/nextcloud}:/var/www/html/config
+#      - ${NC_APPS_DIR-./www/nextcloud/apps}:/var/www/html/apps
   dotnetcore:
     build:
       context: ./bin/dotnetcore
@@ -134,3 +134,4 @@ volumes:
   op_postgresql_data:
   gl_data_dir:
   gl_config_dir:
+  nc_data_dir:
