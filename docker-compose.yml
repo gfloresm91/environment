@@ -83,7 +83,7 @@ services:
     ports:
       - ${OP_PORT-4001}:80
     environment:
-      # This is comment because it doesnt work form me
+      # This is comment because it doesnt work for me
       # EMAIL_DELIVERY_METHOD: ${EMAIL_DELIVERY_METHOD-Yourpassword123}
       # SMTP_ADDRESS: ${SMTP_ADDRESS-smtp.example.net}
       # SMTP_PORT: ${SMTP_PORT-587}
@@ -108,7 +108,7 @@ services:
       - ${GL_SSH_PORT-22}:22
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'http://${GL_HOSTNAME-gitlab.test}'
+        external_url 'https://${GL_HOSTNAME-gitlab.test}'
     volumes:
       - gl_config_dir:/etc/gitlab
       - ${GL_LOGS_DIR-./logs/gitlab}:/var/log/gitlab
