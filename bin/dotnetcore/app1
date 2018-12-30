@@ -1,0 +1,10 @@
+FROM microsoft/dotnet:2.1-aspnetcore-runtime
+ARG NETCORE_APP1_DIR_NAME
+ARG NETCORE_APP1_DLL_NAME
+
+# Transform to env var because arg dont work inside container with entrypoint
+ENV NETCORE_APP1_DIR_NAME_ENV=$NETCORE_APP1_DIR_NAME
+ENV NETCORE_APP1_DLL_NAME_ENV=$NETCORE_APP1_DLL_NAME
+
+WORKDIR /source/$NETCORE_APP1_DIR_NAME_ENV
+ENTRYPOINT ["sh", "-c", "dotnet $NETCORE_APP1_DLL_NAME_ENV"]

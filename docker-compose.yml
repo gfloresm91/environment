@@ -126,24 +126,40 @@ services:
       - nc_data_dir:/var/www/html/data
       - ${NC_CONFIG_DIR-./config/nextcloud}:/var/www/html/config
       - nc_apps_dir:/var/www/html/apps
-  dotnetcore:
+
+  # (╯'□')╯︵ ┻━┻ fuck this shit
+  # This is the better option what i found for multiple instances of dotnet ;(
+  dotnetcore.app1:
     build:
       context: ./bin/dotnetcore
+      dockerfile: app1
       args:
        NETCORE_APP1_DIR_NAME: ${NETCORE_APP1_DIR_NAME-app1_dir_name}
        NETCORE_APP1_DLL_NAME: ${NETCORE_APP1_DLL_NAME-app1.dll}
-       # Example for others apps 
-       # NETCORE_APP2_DIR_NAME: ${NETCORE_APP2_DIR_NAME-app2_dir_name}
-       # NETCORE_APP2_DLL_NAME: ${NETCORE_APP2_DLL_NAME-app2.dll}
-    container_name: 'dotnetcore'
+    container_name: 'dotnetcore.app1'
     depends_on:
       - mssql
       - mysql
     ports:
       - ${NETCORE_APP1_PORT-5000}:5000
-      # - ${NETCORE_APP2_PORT-5001}:5001
     volumes:
       - ${NETCORE_ROOT_DIR-./www/netcore}:/source
+  # Uncomment this code for second app, repeat the code for others apps
+  # dotnetcore.app2:
+  #   build:
+  #     context: ./bin/dotnetcore 
+  #     dockerfile: app2
+  #     args:
+  #       NETCORE_APP2_DIR_NAME: ${NETCORE_APP2_DIR_NAME-app2_dir_name}
+  #       NETCORE_APP2_DLL_NAME: ${NETCORE_APP2_DLL_NAME-app2.dll}
+  #   container_name: 'dotnetcore.app2'
+  #   depends_on:
+  #     - mssql
+  #     - mysql
+  #   ports:
+  #     - ${NETCORE_APP2_PORT-5001}:5001
+  #   volumes:
+  #     - ${NETCORE_ROOT_DIR-./www/netcore}:/source
     
 # Storage section
 volumes:
