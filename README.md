@@ -32,6 +32,7 @@ Debe quedar el siguiente árbol de directorios
 - config
     - apache
     - letsencrypt
+    - nextcloud
     - php
     - vhosts
 - data
@@ -39,22 +40,27 @@ Debe quedar el siguiente árbol de directorios
     - mysql
 - logs
     - apache2
+    - gitlab
     - mssql
     - mysql
+    - openproject
 - www
-    - *Las fuentes de tus proyectos*
     - netcore
+    - nextcloud
+    - *Las fuentes de tus proyectos*
 
 ## Instalación
 
 En una terminal se debe ingresar el siguiente comando:
 
 ```bash
-docker-compose up
+docker-compose build
 ```
 
-Luego de verificado que esta todo correcto, se debe correr el mismo comando pero en background
+Luego de verificado que esta todo correcto, ejecutas el comando para que funcione en background
 
 ```bash
 docker-compose up -d
 ```
+
+* **Asegurate de utilizar tus propias variables de entorno personalizadas, renombra el archivo .env_sample a .env y modifica los valores**
