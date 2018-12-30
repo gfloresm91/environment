@@ -129,12 +129,19 @@ services:
   dotnetcore:
     build:
       context: ./bin/dotnetcore
-    container_name: 'dotnet'
+      args:
+       NETCORE_APP1_DIR_NAME: ${NETCORE_APP1_DIR_NAME-app1_dir_name}
+       NETCORE_APP1_DLL_NAME: ${NETCORE_APP1_DLL_NAME-app1.dll}
+       # Example for others apps 
+       # NETCORE_APP2_DIR_NAME: ${NETCORE_APP2_DIR_NAME-app2_dir_name}
+       # NETCORE_APP2_DLL_NAME: ${NETCORE_APP2_DLL_NAME-app2.dll}
+    container_name: 'dotnetcore'
     depends_on:
       - mssql
       - mysql
     ports:
-      - ${NETCORE_PORT-5000}:5000
+      - ${NETCORE_APP1_PORT-5000}:5000
+      # - ${NETCORE_APP2_PORT-5001}:5001
     volumes:
       - ${NETCORE_ROOT_DIR-./www/netcore}:/source
     
