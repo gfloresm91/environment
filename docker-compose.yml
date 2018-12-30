@@ -76,22 +76,21 @@ services:
       - letsencrypt_dir:/etc/letsencrypt
       - letsencrypt_lib_dir:/var/lib/letsencrypt
   openproject:
-    image: openproject/community:7
+    image: openproject/community
     container_name: 'openproject'
     depends_on:
       - mysql
     ports:
       - ${OP_PORT-4001}:80
     environment:
-      # This is comment because it doesnt work for me
-      # EMAIL_DELIVERY_METHOD: ${EMAIL_DELIVERY_METHOD-Yourpassword123}
-      # SMTP_ADDRESS: ${SMTP_ADDRESS-smtp.example.net}
-      # SMTP_PORT: ${SMTP_PORT-587}
-      # SMTP_DOMAIN: ${SMTP_DOMAIN-example.net}
-      # SMTP_AUTHENTICATION: ${SMTP_AUTHENTICATION-plain}
-      # SMTP_USER_NAME: ${SMTP_USER_NAME-user}
-      # SMTP_PASSWORD: ${SMTP_PASSWORD-password}
-      # SMTP_ENABLE_STARTTLS_AUTO: ${SMTP_ENABLE_STARTTLS_AUTO-true}
+      EMAIL_DELIVERY_METHOD: ${EMAIL_DELIVERY_METHOD-Yourpassword123}
+      SMTP_ADDRESS: ${SMTP_ADDRESS-smtp.example.net}
+      SMTP_PORT: ${SMTP_PORT-587}
+      SMTP_DOMAIN: ${SMTP_DOMAIN-example.net}
+      SMTP_AUTHENTICATION: ${SMTP_AUTHENTICATION-plain}
+      SMTP_USER_NAME: ${SMTP_USER_NAME-user}
+      SMTP_PASSWORD: ${SMTP_PASSWORD-password}
+      SMTP_ENABLE_STARTTLS_AUTO: ${SMTP_ENABLE_STARTTLS_AUTO-true}
       
       # Important: verify user privilegies of ${MYSQL_USER}
       DATABASE_URL: 'mysql2://${MYSQL_USER-user}:${MYSQL_PASSWORD-secret}@mysql:3306/${OP_DB_NAME-databasename}'
@@ -125,7 +124,7 @@ services:
       # Same what letsencrypt section, change this section if you prefer
       # to directory folder
       - nc_data_dir:/var/www/html/data
-      - ${NC_CONFIG_DIR-./www/config/nextcloud}:/var/www/html/config
+      - ${NC_CONFIG_DIR-./config/nextcloud}:/var/www/html/config
       - nc_apps_dir:/var/www/html/apps
   dotnetcore:
     build:
