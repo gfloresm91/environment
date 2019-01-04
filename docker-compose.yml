@@ -105,9 +105,6 @@ services:
     ports:
       - ${GL_WEB_PORT-4002}:80
       - ${GL_SSH_PORT-22}:22
-    environment:
-      GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://${GL_HOSTNAME-gitlab.test}'
     volumes:
       - gl_config_dir:/etc/gitlab
       - ${GL_LOGS_DIR-./logs/gitlab}:/var/log/gitlab
