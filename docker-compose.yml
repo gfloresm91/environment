@@ -18,51 +18,6 @@ services:
       MYSQL_USER: ${MYSQL_USER-user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD-secret}
 
-  mssql:
-    image: microsoft/mssql-server-linux
-    container_name: "mssql"
-    ports:
-      - ${MSSQL_PORT-1433}:1433
-    volumes:
-      - ${MSSQL_DATA_DIR-./data/mssql}:/var/opt/mssql
-      - ${MSSQL_LOG_DIR-./logs/mssql}:/var/opt/mssql/log
-    environment:
-      SA_PASSWORD: ${MSSQL_PASSWORD-Yourpassword123}
-      ACCEPT_EULA: "Y"
-
-  mongo:
-    image: mongo
-    restart: "always"
-    container_name: "mongo"
-    tty: true
-    ports:
-      - ${MONGO_PORT-27017}:${MONGO_PORT-27017}
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME-root}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD-example}
-    volumes:
-      - mongo_database:/data/db
-      - mongo_config_database:/data/configdb
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: "phpmyadmin"
-    depends_on:
-      - mysql
-    ports:
-      - ${PMA_WEB_PORT-8080}:80
-    environment:
-      PMA_HOST: mysql
-      PMA_PORT: ${PMA_PORT-3306}
-    volumes:
-      - /sessions
-
-  redis:
-    image: redis:latest
-    container_name: "redis"
-    ports:
-      - ${REDIS_PORT-6379}:6379
-
   # Web section
 
   webserver:
@@ -92,31 +47,6 @@ services:
       - letsencrypt_dir:/etc/letsencrypt
       - letsencrypt_lib_dir:/var/lib/letsencrypt
 
-  # Openproject is a shit, Continuous 422 error, i dont recommend this
-  # Commented until finding solution
-  # openproject:
-  #   image: openproject/community
-  #   container_name: 'openproject'
-  #   depends_on:
-  #     - mysql
-  #   ports:
-  #     - ${OP_PORT-4001}:80
-  #   environment:
-  #     EMAIL_DELIVERY_METHOD: ${EMAIL_DELIVERY_METHOD-Yourpassword123}
-  #     SMTP_ADDRESS: ${SMTP_ADDRESS-smtp.example.net}
-  #     SMTP_PORT: ${SMTP_PORT-587}
-  #     SMTP_DOMAIN: ${SMTP_DOMAIN-example.net}
-  #     SMTP_AUTHENTICATION: ${SMTP_AUTHENTICATION-plain}
-  #     SMTP_USER_NAME: ${SMTP_USER_NAME-user}
-  #     SMTP_PASSWORD: ${SMTP_PASSWORD-password}
-  #     SMTP_ENABLE_STARTTLS_AUTO: ${SMTP_ENABLE_STARTTLS_AUTO-true}
-
-  #     # Important: verify user privilegies of ${MYSQL_USER}
-  #     DATABASE_URL: 'mysql2://${MYSQL_USER-user}:${MYSQL_PASSWORD-secret}@mysql:3306/${OP_DB_NAME-databasename}'
-  #   volumes:
-  #     - op_postgresql_data:/var/lib/postgresql/9.6/main
-  #     - ${OP_LOG_DIR-./logs/openproject}:/var/log/supervisor
-
   gitlab:
     image: gitlab/gitlab-ce:latest
     container_name: "gitlab"
@@ -142,8 +72,19 @@ services:
       - ${GL_LOGS_DIR-./logs/gitlab}:/var/log/gitlab
       - gl_data_dir:/var/opt/gitlab
 
+  gitlab-runner:
+    image: 'gitlab/gitlab-runner:latest'
+    restart: always
+    volumes:
+      - 'runner_config:/etc/gitlab-runner'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    depends_on:
+      - gitlab
+    links:
+      - gitlab
+
   nextcloud:
-    image: nextcloud
+    image: nextcloud:latest
     container_name: "nextcloud"
     restart: always
     ports:
@@ -157,96 +98,12 @@ services:
       - ${NC_CONFIG_DIR-./config/nextcloud}:/var/www/html/config
       - nc_apps_dir:/var/www/html/apps
 
-  # Node section
-
-  node.vue-music:
-    image: node
-    user: "node"
-    working_dir: /home/node/app
-    container_name: "node.vue-music"
-    environment:
-      - NODE_ENV=production
-      - NODE_VUE_MUSIC_PORT=${NODE_VUE_MUSIC_PORT-4004}
-    volumes:
-      - ${VUE_MUSIC_DIR-./www/vue_app1}:/home/node/app
-    ports:
-      # Here set you personal port
-      - ${NODE_VUE_MUSIC_PORT-4004}:4004
-    command: "npm start"
-
-  node.portafolio-backend-angular:
-    image: node:alpine
-    user: "node"
-    working_dir: /home/node/app
-    container_name: "node.portafolio-backend-angular"
-    restart: "always"
-    depends_on:
-      - mongo
-    environment:
-      NODE_ENV: ${NODE_ENV-production}
-    volumes:
-      - ${PORTAFOLIO_BACKEND_ANGULAR_DIR-./www/portafolio-angular-backend}:/home/node/app
-    ports:
-      # Here set you personal port
-      - ${PORTAFOLIO_BACKEND_ANGULAR_PORT-4005}:${PORTAFOLIO_BACKEND_ANGULAR_PORT-4005}
-    command: "npm start"
-
-  node.portafolio-angular:
-    image: node
-    user: "node"
-    working_dir: /home/node/app
-    container_name: "node.portafolio-angular"
-    restart: "always"
-    environment:
-      NODE_ENV: ${NODE_ENV-production}
-    volumes:
-      - ${PORTAFOLIO_ANGULAR_DIR-./www/javascript/portafolio-angular}:/home/node/app
-    ports:
-      # Here set you personal port
-      - ${PORTAFOLIO_ANGULAR_PORT-4006}:${PORTAFOLIO_ANGULAR_PORT-4006}
-    command: "npm start"
-
-  dotnetcore.app1:
-    build:
-      context: ./bin/dotnetcore
-      dockerfile: app1
-      args:
-        NETCORE_APP1_DIR_NAME: ${NETCORE_APP1_DIR_NAME-app1_dir_name}
-        NETCORE_APP1_DLL_NAME: ${NETCORE_APP1_DLL_NAME-app1.dll}
-    container_name: "dotnetcore.app1"
-    depends_on:
-      # - mssql
-      - mysql
-    ports:
-      - ${NETCORE_APP1_PORT-5000}:5000
-    volumes:
-      - ${NETCORE_ROOT_DIR-./www/netcore}:/source
-
-  # Uncomment this code for second app, repeat the code for others apps
-  # dotnetcore.app2:
-  #   build:
-  #     context: ./bin/dotnetcore
-  #     dockerfile: app2
-  #     args:
-  #       NETCORE_APP2_DIR_NAME: ${NETCORE_APP2_DIR_NAME-app2_dir_name}
-  #       NETCORE_APP2_DLL_NAME: ${NETCORE_APP2_DLL_NAME-app2.dll}
-  #   container_name: 'dotnetcore.app2'
-  #   depends_on:
-  #     - mssql
-  #     - mysql
-  #   ports:
-  #     - ${NETCORE_APP2_PORT-5001}:5001
-  #   volumes:
-  #     - ${NETCORE_ROOT_DIR-./www/netcore}:/source
-
 # Storage section
 volumes:
-  op_postgresql_data:
   gl_data_dir:
   gl_config_dir:
   nc_data_dir:
   nc_apps_dir:
   letsencrypt_dir:
   letsencrypt_lib_dir:
-  mongo_database:
-  mongo_config_database:
+  runner_config:
