@@ -30,7 +30,6 @@ services:
     restart: "always"
     depends_on:
       - mysql
-      - mssql
     ports:
       - 80:80
       - 443:443
@@ -74,6 +73,7 @@ services:
 
   gitlab-runner:
     image: 'gitlab/gitlab-runner:latest'
+    container_name: 'gitlab-runner'
     restart: always
     volumes:
       - 'runner_config:/etc/gitlab-runner'
