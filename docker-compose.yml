@@ -1,109 +1,26 @@
-version: "3"
+version: '3.9'
 
 services:
-  # Databases section
-  mysql:
-    build:
-      context: ./bin/mysql
-    container_name: "mysql"
-    restart: "always"
-    ports:
-      - ${MYSQL_PORT-3306}:3306
-    volumes:
-      - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
-      - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD-secret}
-      MYSQL_DATABASE: ${MYSQL_DATABASE-newdb}
-      MYSQL_USER: ${MYSQL_USER-user}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD-secret}
-
-  # Web section
-
-  webserver:
-    build:
-      context: ./bin/webserver
-      args:
-        USER: ${USER-newuser}
-        TZ: ${USER-America/Santiago}
-    container_name: "webserver"
-    restart: "always"
-    depends_on:
-      - mysql
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ${DOCUMENT_ROOT-./www}:/var/www/html
-      - ${PHP_INI-./config/php/php.ini}:/etc/php/7.2/apache2/php.ini
-      - ${APACHE_DIR_CONF-./config/apache/dir.conf}:/etc/apache2/mods-enabled/dir.conf
-      - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
-      - ${APACHE_LOG_DIR-./logs/apache2}:/var/log/apache2
-
-      # Change this section to
-      # ./config/letsencrypt:/etc/letsencrypt
-      # if you prefer
-      - letsencrypt_dir:/etc/letsencrypt
-      - letsencrypt_lib_dir:/var/lib/letsencrypt
-
-  gitlab:
-    image: gitlab/gitlab-ce:latest
-    container_name: "gitlab"
-    restart: "always"
-    hostname: ${GL_HOSTNAME-gitlab.test}
-    ports:
-      - ${GL_WEB_PORT-4002}:80
-      - ${GL_SSH_PORT-22}:22
-    environment:
-      GITLAB_OMNIBUS_CONFIG: |
-        gitlab_rails['smtp_enable'] = true
-        gitlab_rails['smtp_address'] = "smtp.gmail.com"
-        gitlab_rails['smtp_port'] = 587
-        gitlab_rails['smtp_user_name'] = $SMTP_USER_NAME
-        gitlab_rails['smtp_password'] = $SMTP_PASSWORD
-        gitlab_rails['smtp_domain'] = "smtp.gmail.com"
-        gitlab_rails['smtp_authentication'] = "login"
-        gitlab_rails['smtp_enable_starttls_auto'] = true
-        gitlab_rails['smtp_tls'] = false
-        gitlab_rails['smtp_openssl_verify_mode'] = 'peer'
-    volumes:
-      - gl_config_dir:/etc/gitlab
-      - ${GL_LOGS_DIR-./logs/gitlab}:/var/log/gitlab
-      - gl_data_dir:/var/opt/gitlab
-
-  gitlab-runner:
-    image: 'gitlab/gitlab-runner:latest'
-    container_name: 'gitlab-runner'
-    restart: always
-    volumes:
-      - 'runner_config:/etc/gitlab-runner'
-      - '/var/run/docker.sock:/var/run/docker.sock'
-    depends_on:
-      - gitlab
-    links:
-      - gitlab
-
-  nextcloud:
-    image: nextcloud:latest
-    container_name: "nextcloud"
+  nginx-proxy:
+    image: jwilder/nginx-proxy
     restart: always
     ports:
-      - ${NC_PORT-4003}:80
-    depends_on:
-      - mysql
+      - "80:80"
     volumes:
-      # Same what letsencrypt section, change this section if you prefer
-      # to directory folder
-      - nc_data_dir:/var/www/html/data
-      - ${NC_CONFIG_DIR-./config/nextcloud}:/var/www/html/config
-      - nc_apps_dir:/var/www/html/apps
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - html:/usr/share/nginx/html
 
-# Storage section
+  portfolio:
+    image: nginx
+    restart: always
+    expose:
+      - "80"
+    volumes:
+      - ./www/portfolio:/usr/share/nginx/html:ro
+    environment:
+      - VIRTUAL_HOST=portfolio.localhost
+    depends_on:
+      - nginx-proxy
+
 volumes:
-  gl_data_dir:
-  gl_config_dir:
-  nc_data_dir:
-  nc_apps_dir:
-  letsencrypt_dir:
-  letsencrypt_lib_dir:
-  runner_config:
+  html:

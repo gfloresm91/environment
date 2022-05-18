@@ -1,66 +1,34 @@
-# Entorno de desarrollo [gabrielflores.cl](https://gabrielflores.cl)
+# Development environment [gabrielflores.cl](https://gabrielflores.cl)
 
-Proyecto creado siguiendo la base del repositorio [docker-compose-lamp](https://github.com/sprintcube/docker-compose-lamp) y adaptado para mi desarrollo personal.
+Project created on the basis of the repository [docker-compose-lamp](https://github.com/sprintcube/docker-compose-lamp) and adapted for my personal development
 
-## Herramientas y tecnologías utilizadas
+## Tools and technologies used
 
-- Docker
-- Docker compose
-- Ubuntu server
-- Apache2
-- PHP
-- Mysql
-- Letsencrypt
-- PHPMyAdmin
-- Redis
-- .Net Core
-- Microsoft Sql Server Core
+- [Nginx](https://hub.docker.com/_/nginx)
+- [Nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy)
 
-## Pre-requisitos
+## Prerequisities
 
-- Instalar docker
-- Dentro de la carpeta **netcore** deben estar las fuentes del proyecto asp.net core creadas con el comando **dotnet publish**
+- Install [docker](https://docs.docker.com/get-docker/)
+- Install [docker-compose](https://docs.docker.com/compose/install/)
 
-## Estructura de carpetas
+## Folder structure
 
-Debe quedar el siguiente árbol de directorios
-
-- bin
-    - dotnetcore
-    - mysql
-    - webserver
-- config
-    - apache
-    - letsencrypt
-    - nextcloud
-    - php
-    - vhosts
-- data
-    - mssql
-    - mysql
-- logs
-    - apache2
-    - gitlab
-    - mssql
-    - mysql
-    - openproject
 - www
-    - netcore
-    - nextcloud
-    - *Las fuentes de tus proyectos*
+    - *source code of your projects*
 
-## Instalación
+## Installation
 
-En una terminal se debe ingresar el siguiente comando:
+In a terminal enter the following command:
 
 ```bash
 docker-compose build
 ```
 
-Luego de verificado que esta todo correcto, ejecutas el comando para que funcione en background
+After verifying that everithing is correct, run the command to make it work in the background
 
 ```bash
 docker-compose up -d
 ```
 
-* **Asegurate de utilizar tus propias variables de entorno personalizadas, renombra el archivo .env_sample a .env y modifica los valores**
+* **Make sure you use your own custom environment variables, rename the .env_sample file to .env and modify the values**
